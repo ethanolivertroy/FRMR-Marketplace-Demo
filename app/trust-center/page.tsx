@@ -12,6 +12,7 @@ import KSIPanel from "../components/KSIPanel";
 import FRRPanel from "../components/FRRPanel";
 import FRDPanel from "../components/FRDPanel";
 import TamboChat from "../components/TamboChat";
+import TrustJsonRenderer from "../components/TrustJsonRenderer";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type TrustData = Record<string, any>;
@@ -34,6 +35,7 @@ const CSP_TABS = [
   { id: "policies", label: "📋 Policies" },
   { id: "subprocessors", label: "🔗 Subprocessors" },
   { id: "pen-tests", label: "🔍 Pen Tests" },
+  { id: "json-render", label: "🎨 JSON Render" },
 ];
 
 const FRMR_TABS = [
@@ -182,6 +184,9 @@ function TrustCenterInner() {
                 )}
                 {activeTab === "pen-tests" && (
                   <PenTestsPanel penTests={data.pen_tests ?? []} />
+                )}
+                {activeTab === "json-render" && (
+                  <TrustJsonRenderer data={data} />
                 )}
               </>
             )}
