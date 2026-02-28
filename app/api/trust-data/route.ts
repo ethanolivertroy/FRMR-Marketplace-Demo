@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { readFile } from "fs/promises";
+import path from "path";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -6,6 +8,24 @@ export async function GET(request: NextRequest) {
 
   if (!url) {
     return NextResponse.json({ error: "Missing url parameter" }, { status: 400 });
+  }
+
+  // Handle relative URLs by reading from the public directory
+  if (url.startsWith("/")) {
+    try {
+      const filePath = path.join(process.cwd(), "public", url);
+      // Ensure the resolved path stays within the public directory
+      const publicDir = path.join(process.cwd(), "public");
+      if (!filePath.startsWith(publicDir)) {
+        return NextResponse.json({ error: "Invalid path" }, { status: 400 });
+      }
+      const content = await readFile(filePath, "utf-8");
+      const data = JSON.parse(content);
+      return NextResponse.json(data);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      return NextResponse.json({ error: `File read error: ${message}` }, { status: 502 });
+    }
   }
 
   try {
